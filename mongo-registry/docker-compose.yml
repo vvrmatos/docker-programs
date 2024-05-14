@@ -1,0 +1,39 @@
+# Specify the Docker Compose file format version
+version: '3.8'
+
+# Define the services to run
+services:
+
+  # First service: the application
+  app:
+    # Build the Docker image using the Dockerfile in the current directory
+    build: .
+    # Map the 'app' directory on the host to '/app' inside the container
+    volumes:
+      - ./app:/app
+    # Map port 80 inside the container to port 4000 on the host
+    ports:
+      - "4000:80"
+    # Keep the standard input open (useful for interactive applications)
+    stdin_open: true
+    # Allocate a pseudo-TTY (simulates a terminal, useful for interactive applications)
+    tty: true
+    # Specify that this service depends on the mongo service
+    depends_on:
+      - mongo
+
+  # Second service: MongoDB
+  mongo:
+    # Use the official MongoDB image from Docker Hub
+    image: mongo
+    # Map port 27017 inside the container to port 27017 on the host
+    ports:
+      - "27017:27017"
+    # Mount the named volume 'mongodata' to '/data/db' inside the container
+    volumes:
+      - mongodata:/data/db
+
+# Define volumes used by services
+volumes:
+  # Named volume 'mongodata' used for persisting MongoDB data
+  mongodata:
